@@ -1,0 +1,99 @@
+{
+  "receipt": {
+    "date": {
+      "type": "date",
+      "required": true,
+      "description": "영수증 날짜 (YYYY-MM-DD)"
+    },
+
+    "category": {
+      "type": "enum",
+      "values": ["마트", "교통비", "의료비", "학원비", "기타"],
+      "default": "기타",
+      "description": "지출 분류"
+    },
+
+    "store": {
+      "name": {
+        "type": "string",
+        "required": true
+      },
+      "businessNumber": {
+        "type": "string",
+        "pattern": "^[0-9]{10}$"
+      }
+    },
+
+    "items": {
+      "type": "array",
+      "item": {
+        "name": { "type": "string" },
+        "quantity": { "type": "number", "default": 1 },
+        "unitPrice": { "type": "number" },
+        "amount": { "type": "number", "required": true }
+      }
+    },
+
+    "amounts": {
+      "taxable": { "type": "number", "default": 0 },
+      "tax": { "type": "number", "default": 0 },
+      "taxFree": { "type": "number", "default": 0 },
+      "total": { "type": "number", "required": true }
+    },
+
+    "payment": {
+      "method": {
+        "type": "enum",
+        "values": ["CARD", "CASH", "TRANSFER", "OTHER"],
+        "required": true
+      },
+      "cardCompany": {
+        "type": "enum",
+        "values": [
+          "국민카드",
+          "신한카드",
+          "삼성카드",
+          "현대카드",
+          "롯데카드",
+          "하나카드",
+          "BC카드",
+          "기타"
+        ],
+        "condition": "payment.method == 'CARD'",
+        "default": "기타"
+      }
+    },
+
+    "meta": {
+      "source": {
+        "type": "enum",
+        "values": ["SCAN", "MANUAL"]
+      },
+      "createdAt": {
+        "type": "datetime",
+        "auto": true
+      }
+    }
+  },
+
+  "spreadsheet": {
+    "sheetName": "영수증내역",
+    "columns": [
+      "날짜",
+      "분류",
+      "상호명",
+      "사업자번호",
+      "품명",
+      "수량",
+      "단가",
+      "금액",
+      "과세물품",
+      "부가세",
+      "면세물품",
+      "총액",
+      "결제수단",
+      "카드사",
+      "등록일시"
+    ]
+  }
+}

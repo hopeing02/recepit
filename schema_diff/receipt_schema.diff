@@ -1,0 +1,43 @@
+{
+  "added": {
+    "receipt.payment": {
+      "method": {
+        "type": "enum",
+        "values": ["CARD", "CASH", "TRANSFER", "OTHER"],
+        "required": true,
+        "description": "결제수단"
+      },
+      "cardCompany": {
+        "type": "enum",
+        "values": [
+          "국민카드",
+          "신한카드",
+          "삼성카드",
+          "현대카드",
+          "롯데카드",
+          "하나카드",
+          "BC카드",
+          "기타"
+        ],
+        "condition": "payment.method == 'CARD'",
+        "default": "기타",
+        "description": "카드사"
+      }
+    }
+  },
+
+  "spreadsheet": {
+    "columnsAppend": ["결제수단", "카드사"]
+  },
+
+  "rules": {
+    "code": {
+      "appendOnly": true,
+      "noOverwrite": true
+    },
+    "ui": {
+      "autoSelectEnum": true,
+      "noLayoutChange": true
+    }
+  }
+}
