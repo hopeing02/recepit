@@ -1,0 +1,36 @@
+name: Auto Patch GAS
+
+on:
+  push:
+    paths:
+      - "schema/**"
+      - "schema_diff/**"
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    env:
+      CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - run: pip install -r fastapi/requirements.txt
+
+      - name: Generate fragments
+        run: python fastapi/main.py
+
+      - name: Show diff
+        run: git diff
+
+      - name: Commit patch
+        run: |
+          git config user.name "auto-bot"
+          git config user.email "bot@github.com"
+          git add Code.gs Index.html
+          git commit -m "auto: schema-driven patch"
+          git push
