@@ -25,7 +25,7 @@ jobs:
           python -m pip install -r requirements.txt
 
       - name: Generate fragments
-        run: python -m fastapi.main
+        run: python fastapi/main.py
 
       - name: Show diff
         run: git diff
