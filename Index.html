@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      padding: 40px;
+      max-width: 900px;
+      width: 100%;
+    }
+    h1 { color: #667eea; text-align: center; margin-bottom: 10px; font-size: 28px; }
+    .subtitle { text-align: center; color: #666; margin-bottom: 30px; font-size: 14px; }
+    
+    /* 탭 메뉴 */
+    .tab-menu {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+      border-bottom: 2px solid #e0e0e0;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 15px;
+      border: none;
+      background: transparent;
+      color: #666;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      border-bottom: 3px solid transparent;
+    }
+    .tab-btn:hover { color: #667eea; }
+    .tab-btn.active {
+      color: #667eea;
+      border-bottom-color: #667eea;
+    }
+    
+    /* 탭 컨텐츠 */
+    ..tab-content { display: none; }
+    .tab-content.active { display: block; }
+    
+    .upload-area {
+      border: 3px dashed #667eea;
+      border-radius: 15px;
+      padding: 40px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      background: #f8f9ff;
+    }
+    .upload-area:hover { border-color: #764ba2; background: #f0f2ff; }
+    .upload-area.dragover { border-color: #764ba2; background: #e8ebff; transform: scale(1.02); }
+    .upload-icon { font-size: 60px; margin-bottom: 15px; }
+    .upload-text { color: #667eea; font-size: 18px; font-weight: 600; margin-bottom: 10px; }
+    .upload-hint { color: #999; font-size: 14px; }
+    input[type="file"] { display: none; }
+    #preview { margin-top: 20px; text-align: center; }
+    #preview img { max-width: 100%; max-height: 300px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+    
+    .btn {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 20px;
+    }
+    .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+    .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4); }
+    .btn-success { background: #4caf50; color: white; }
+    .btn-success:hover { background: #45a049; }
+    .btn-info { background: #2196F3; color: white; }
+    .btn-info:hover { background: #0b7dda; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    
+    #loading { display: none; text-align: center; margin-top: 20px; }
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 10px;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    
+    #editSection { display: none; margin-top: 30px; padding: 20px; background: #f8f9ff; border-radius: 10px; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; font-weight: 600; color: #333; margin-bottom: 5px; font-size: 14px; }
+    input[type="text"], input[type="date"], input[type="number"], input[type="month"] {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    input:focus { outline: none; border-color: #667eea; }
+    
+    .item-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 40px; gap: 10px; margin-bottom: 10px; align-items: end; }
+    .btn-add { background: #4caf50; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; margin: 10px 0; }
+    .btn-remove { background: #f44336; color: white; padding: 8px; border: none; border-radius: 5px; cursor: pointer; }
+    
+    #result { margin-top: 20px; padding: 20px; border-radius: 10px; display: none; }
+    .success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+    .error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+    
+    h3 { margin-bottom: 15px; color: #667eea; }
+    h4 { margin: 20px 0 10px 0; color: #667eea; }
+    
+    /* 통계 스타일 */
+    .stats-container { margin-top: 20px; }
+    .stats-card {
+      background: #f8f9ff;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+    .stats-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    .stats-row:last-child { border-bottom: none; }
+    .stats-label { font-weight: 600; color: #666; }
+    .stats-value { color: #667eea; font-weight: 700; }
+    .stats-total {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 15px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧾 영수증 관리 시스템</h1>
+    <p class="subtitle">사진 스캔, 수동입력, 월별통계를 한 곳에서</p>
+    
+    <!-- 탭 메뉴 -->
+    <div class="tab-menu">
+      <button class="tab-btn active" onclick="switchTab('scan')">📸 사진 스캔</button>
+      <button class="tab-btn" onclick="switchTab('manual')">✍️ 수동 입력</button>
+      <button class="tab-btn" onclick="switchTab('stats')">📊 월별 통계</button>
+    </div>
+    
+    <!-- 사진 스캔 탭 -->
+    <div id="scanTab" class="tab-content active">
+      <div class="upload-area" id="uploadArea">
+        <div class="upload-icon">📸</div>
+        <div class="upload-text">클릭하거나 드래그하여 업로드</div>
+        <div class="upload-hint">JPG, PNG 파일 (최대 10MB)</div>
+        <input type="file" id="fileInput" accept="image/*">
+      </div>
+      
+      <div id="preview"></div>
+      <button class="btn btn-primary" id="analyzeBtn" disabled>분석 시작</button>
+      
+      <div id="loading">
+        <div class="spinner"></div>
+        <div>영수증을 분석하는 중...</div>
+      </div>
+      
+      <div id="editSection">
+        <h3>✏️ 분석 결과 확인 및 수정</h3>
+        
+        <div class="form-group">
+          <label>날짜</label>
+          <input type="date" id="editDate">
+        </div>
+        
+        <div class="form-group">
+          <label>상호명</label>
+          <input type="text" id="editStoreName">
+        </div>
+        
+        <div class="form-group">
+          <label>사업자번호</label>
+          <input type="text" id="editBusinessNumber">
+        </div>
+        
+        <h4>품목</h4>
+        <button class="btn-add" onclick="addEditItem()">+ 품목 추가</button>
+        <div id="editItems"></div>
+        
+        <div class="form-group">
+          <label>과세물품 (공급가액)</label>
+          <input type="number" id="editTaxableAmount">
+        </div>
+        
+        <div class="form-group">
+          <label>부가세 (세액)</label>
+          <input type="number" id="editTaxAmount">
+        </div>
+        
+        <div class="form-group">
+          <label>면세물품</label>
+          <input type="number" id="editTaxFreeAmount">
+        </div>
+        
+        <div class="form-group">
+          <label>총액</label>
+          <input type="number" id="editTotalAmount">
+        </div>
+        
+        <button class="btn btn-success" onclick="saveEdited()">💾 스프레드시트에 저장</button>
+      </div>
+    </div>
+    
+    <!-- 수동 입력 탭 -->
+    <div id="manualTab" class="tab-content">
+      <h3>✍️ 영수증 수동 입력</h3>
+      
+      <div class="form-group">
+        <label>날짜</label>
+        <input type="date" id="manualDate">
+      </div>
+      
+      <div class="form-group">
+        <label>상호명</label>
+        <input type="text" id="manualStoreName" placeholder="상호명 입력">
+      </div>
+      
+      <div class="form-group">
+        <label>사업자번호</label>
+        <input type="text" id="manualBusinessNumber" placeholder="사업자번호 (숫자만)">
+      </div>
+      
+      <h4>품목</h4>
+      <button class="btn-add" onclick="addManualItem()">+ 품목 추가</button>
+      <div id="manualItems"></div>
+      
+      <div class="form-group">
+        <label>과세물품 (공급가액)</label>
+        <input type="number" id="manualTaxableAmount" placeholder="0">
+      </div>
+      
+      <div class="form-group">
+        <label>부가세 (세액)</label>
+        <input type="number" id="manualTaxAmount" placeholder="0">
+      </div>
+      
+      <div class="form-group">
+        <label>면세물품</label>
+        <input type="number" id="manualTaxFreeAmount" placeholder="0">
+      </div>
+      
+      <div class="form-group">
+        <label>총액</label>
+        <input type="number" id="manualTotalAmount" placeholder="0">
+      </div>
+      
+      <h4>자동 분류</h4>
+      <div class="form-group">
+        <label>카테고리</label>
+        <select id="manualCategory" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px;">
+          <option value="식비">🍔 식비</option>
+          <option value="교통비">🚗 교통비</option>
+          <option value="의료비">🏥 의료비</option>
+          <option value="쇼핑">🛍️ 쇼핑</option>
+          <option value="문화생활">🎬 문화생활</option>
+          <option value="통신비">📱 통신비</option>
+          <option value="공과금">💡 공과금</option>
+          <option value="교육">📚 교육</option>
+          <option value="뷰티">💅 뷰티</option>
+          <option value="기타">📦 기타</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>결제수단</label>
+        <select id="manualPaymentMethod" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px;">
+          <option value="카드">카드</option>
+          <option value="현금">현금</option>
+          <option value="계좌이체">계좌이체</option>
+          <option value="간편결제">간편결제</option>
+        </select>
+      </div>
+      
+      <button class="btn btn-success" onclick="saveManual()">💾 저장하기</button>
+    </div>
+    
+    <!-- 월별 통계 탭 -->
+    <div id="statsTab" class="tab-content">
+      <h3>📊 월별 영수증 통계</h3>
+      
+      <div class="form-group">
+        <label>조회 월 선택</label>
+        <input type="month" id="statsMonth">
+      </div>
+      
+      <button class="btn btn-info" onclick="loadStats()">조회하기</button>
+      
+      <div id="statsResult" class="stats-container"></div>
+    </div>
+    
+    <div id="result"></div>
+  </div>
+
+  <script>
+    // 현재 날짜로 초기화
+    const today = new Date();
+    const dateString = today.toISOString().split('T')[0];
+    const monthString = today.toISOString().slice(0, 7);
+    
+    document.getElementById('manualDate').value = dateString;
+    document.getElementById('statsMonth').value = monthString;
+    
+    // 탭 전환
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      
+      event.target.classList.add('active');
+      
+      if (tab === 'scan') document.getElementById('scanTab').classList.add('active');
+      else if (tab === 'manual') {
+        document.getElementById('manualTab').classList.add('active');
+        if (document.getElementById('manualItems').children.length === 0) addManualItem();
+      }
+      else if (tab === 'stats') document.getElementById('statsTab').classList.add('active');
+    }
+    
+    // ========== 사진 스캔 기능 ==========
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const preview = document.getElementById('preview');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const loading = document.getElementById('loading');
+    const editSection = document.getElementById('editSection');
+    const result = document.getElementById('result');
+    
+    let selectedFile = null;
+    
+    uploadArea.addEventListener('click', () => fileInput.click());
+    uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+    uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+    uploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadArea.classList.remove('dragover');
+      if (e.dataTransfer.files.length > 0) handleFile(e.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener('change', (e) => { if (e.target.files.length > 0) handleFile(e.target.files[0]); });
+    
+    function handleFile(file) {
+      if (!file.type.startsWith('image/')) { alert('이미지 파일만 업로드 가능합니다.'); return; }
+      if (file.size > 10 * 1024 * 1024) { alert('파일 크기는 10MB 이하여야 합니다.'); return; }
+      selectedFile = file;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        preview.innerHTML = '<img src="' + e.target.result + '" alt="미리보기">';
+        analyzeBtn.disabled = false;
+      };
+      reader.readAsDataURL(file);
+    }
+    
+    analyzeBtn.addEventListener('click', () => {
+      if (!selectedFile) return;
+      analyzeBtn.disabled = true;
+      loading.style.display = 'block';
+      editSection.style.display = 'none';
+      result.style.display = 'none';
+      
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64 = e.target.result.split(',')[1];
+        google.script.run.withSuccessHandler(showEditForm).withFailureHandler(showError).analyzeReceiptFromWeb(base64);
+      };
+      reader.readAsDataURL(selectedFile);
+    });
+    
+    function showEditForm(data) {
+      loading.style.display = 'none';
+      analyzeBtn.disabled = false;
+      
+      if (data.error) { showError(data.error); return; }
+      
+      document.getElementById('editDate').value = data.date || '';
+      document.getElementById('editStoreName').value = data.storeName || '';
+      document.getElementById('editBusinessNumber').value = data.businessNumber || '';
+      document.getElementById('editTaxableAmount').value = data.taxableAmount || '';
+      document.getElementById('editTaxAmount').value = data.taxAmount || '';
+      document.getElementById('editTaxFreeAmount').value = data.taxFreeAmount || '';
+      document.getElementById('editTotalAmount').value = data.totalAmount || '';
+      
+      // 자동 분류된 카테고리와 결제수단 설정
+      if (data.category) {
+        document.getElementById('editCategory').value = data.category;
+      }
+      if (data.paymentMethod) {
+        document.getElementById('editPaymentMethod').value = data.paymentMethod;
+      }
+      
+      const itemsDiv = document.getElementById('editItems');
+      itemsDiv.innerHTML = '';
+      
+      if (data.items && data.items.length > 0) {
+        data.items.forEach(item => addEditItem(item));
+      } else {
+        addEditItem();
+      }
+      
+      editSection.style.display = 'block';
+      editSection.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    function addEditItem(item) {
+      const itemsDiv = document.getElementById('editItems');
+      const itemRow = document.createElement('div');
+      itemRow.className = 'item-row';
+      itemRow.innerHTML = 
+        '<div><input type="text" class="item-name" placeholder="품명" value="' + (item ? item.name : '') + '"></div>' +
+        '<div><input type="number" class="item-qty" placeholder="수량" value="' + (item ? item.quantity : 1) + '"></div>' +
+        '<div><input type="number" class="item-price" placeholder="단가" value="' + (item ? item.unitPrice : '') + '"></div>' +
+        '<div><input type="number" class="item-amount" placeholder="금액" value="' + (item ? item.amount : '') + '"></div>' +
+        '<div><button class="btn-remove" onclick="removeEditItem(this)">✕</button></div>';
+      itemsDiv.appendChild(itemRow);
+    }
+    
+    function removeEditItem(btn) { btn.closest('.item-row').remove(); }
+    
+    function saveEdited() {
+      const items = [];
+      const itemRows = document.querySelectorAll(' #editItems .item-row');
+      
+      itemRows.forEach(row => {
+        const name = row.querySelector('.item-name').value;
+        const qty = parseInt(row.querySelector('.item-qty').value) || 1;
+        const price = parseInt(row.querySelector('.item-price').value) || 0;
+        const amount = parseInt(row.querySelector('.item-amount')..value) || 0;
+        if (name && amount > 0) {
+          items.push({ name: name, quantity: qty, unitPrice: price, amount: amount });
+        }
+      });
+      
+      const editedData = {
+        date: document.getElementById('editDate').value,
+        storeName: document.getElementById('editStoreName').value,
+        businessNumber: document.getElementById('editBusinessNumber').value,
+        items: items,
+        taxableAmount: parseInt(document.getElementById('editTaxableAmount').value) || 0,
+        taxAmount: parseInt(document.getElementById('editTaxAmount').value) || 0,
+        taxFreeAmount: parseInt(document.getElementById('editTaxFreeAmount').value) || 0,
+        totalAmount: parseInt(document.getElementById('editTotalAmount').value) || 0,
+        category: document..getElementById('editCategory').value,
+        paymentMethod: document.getElementById('editPaymentMethod').value
+      };
+      
+      // 카테고리 아이콘 추가
+      const categoryIcons = {
+        '식비': '🍔', '교통비': '🚗', '의료비': '🏥', '쇼핑': '🛍️',
+        '문화생활': '🎬', '통신비': '📱', '공과금': '💡', '교육': '📚',
+        '뷰티': '💅', '기타': '📦'
+      };
+      editedData.categoryIcon = categoryIcons[editedData.category] || '📦';
+      
+      result.innerHTML = '저장 중...';
+      result.style.display = 'block';
+      
+      google.script.run
+        .withSuccessHandler(function(response) {
+          if (response.success) {
+            result.className = 'success';
+            result.innerHTML = '✅ ' + response.message;
+            editSection.style.display = 'none';
+          } else {
+            result.className = 'error';
+            result.innerHTML = '❌ 오류: ' + response.error;
+          }
+        })
+        .withFailureHandler(function(error) {
+          result.className = 'error';
+          result.innerHTML = '❌ 저장 실패: ' + error;
+        })
+        .saveEditedReceipt(editedData);
+    }
+    
+    function showError(error) {
+      loading.style.display = 'none';
+      analyzeBtn.disabled = false;
+      result.className = 'error';
+      result.style.display = 'block';
+      result.innerHTML = '<h3>❌ 오류 발생</h3><p>' + error + '</p>';
+    }
+    
+    // ========== 수동 입력 기능 ==========
+    function addManualItem(item) {
+      const itemsDiv = document.getElementById('manualItems');
+      const itemRow = document.createElement('div');
+      itemRow.className = 'item-row';
+      itemRow.innerHTML = 
+        '<div><input type="text" class="manual-item-name" placeholder="품명" value="' + (item ? item.name : '') + '"></div>' +
+        '<div><input type="number" class="manual-item-qty" placeholder="수량" value="' + (item ? item.quantity : 1) + '"></div>' +
+        '<div><input type="number" class="manual-item-price" placeholder="단가" value="' + (item ? item.unitPrice : '') + '"></div>' +
+        '<div><input type="number" class="manual-item-amount" placeholder="금액" value="' + (item ? item.amount : '') + '"></div>' +
+        '<div><button class="btn-remove" onclick="removeManualItem(this)">✕</button></div>';
+      itemsDiv.appendChild(itemRow);
+    }
+    
+    function removeManualItem(btn) { btn.closest('.item-row').remove(); }
+    
+    function saveManual() {
+      const items = [];
+      const itemRows = document.querySelectorAll(' #manualItems .item-row');
+      
+      itemRows.forEach(row => {
+        const name = row.querySelector('.manual-item-name').value;
+        const qty = parseInt(row.querySelector('.manual-item-qty').value) || 1;
+        const price = parseInt(row.querySelector('.manual-item-price').value) || 0;
+        const amount = parseInt(row.querySelector('.manual-item-amount').value) || 0;
+        if (name && amount > 0) {
+          items.push({ name: name, quantity: qty, unitPrice: price, amount: amount });
+        }
+      });
+      
+      if (items.length === 0) {
+        alert('최소 1개 이상의 품목을 입력해주세요.');
+        return;
+      }
+      
+      const manualData = {
+        date: document.getElementById('manualDate').value,
+        storeName: document.getElementById('manualStoreName').value,
+        businessNumber: document.getElementById('manualBusinessNumber').value,
+        items: items,
+        taxableAmount: parseInt(document.getElementById('manualTaxableAmount')..value) || 0,
+        taxAmount: parseInt(document.getElementById('manualTaxAmount').value) || 0,
+        taxFreeAmount: parseInt(document.getElementById('manualTaxFreeAmount').value) || 0,
+        totalAmount: parseInt(document.getElementById('manualTotalAmount').value) || 0,
+        category: document.getElementById('manualCategory').value,
+        paymentMethod: document.getElementById('manualPaymentMethod').value
+      };
+      
+      // 카테고리 아이콘 추가
+      const categoryIcons = {
+        '식비': '🍔', '교통비': '🚗', '의료비': '🏥', '쇼핑': '🛍️',
+        '문화생활': '🎬', '통신비': '📱', '공과금': '💡', '교육': '📚',
+        '뷰티': '💅', '기타': '📦'
+      };
+      manualData.categoryIcon = categoryIcons[manualData.category] || '📦';
+      
+      result.innerHTML = '저장 중...';
+      result.style.display = 'block';
+      
+      google.script.run
+        .withSuccessHandler(function(response) {
+          if (response.success) {
+            result.className = 'success';
+            result..innerHTML = '✅ ' + response.message;
+            
+            // 입력 필드 초기화
+            document.getElementById('manualStoreName').value = '';
+            document.getElementById('manualBusinessNumber').value = '';
+            document.getElementById('manualTaxableAmount').value = '';
+            document.getElementById('manualTaxAmount').value = '';
+            document..getElementById('manualTaxFreeAmount').value = '';
+            document.getElementById('manualTotalAmount').value = '';
+            document.getElementById('manualItems').innerHTML = '';
+            addManualItem();
+          } else {
+            result.className = 'error';
+            result.innerHTML = '❌ 오류: ' + response.error;
+          }
+        })
+        .withFailureHandler(function(error) {
+          result.className = 'error';
+          result.innerHTML = '❌ 저장 실패: ' + error;
+        })
+        .saveEditedReceipt(manualData);
+    }
+    
+    // ========== 월별 통계 기능 ==========
+    function loadStats() {
+      const month = document.getElementById('statsMonth').value;
+      if (!month) {
+        alert('조회할 월을 선택해주세요.');
+        return;
+      }
+      
+      const statsResult = document.getElementById('statsResult');
+      statsResult.innerHTML = '<div style="text-align:center;padding:20px;">📊 통계를 불러오는 중...</div>';
+      
+      google.script.run
+        .withSuccessHandler(function(stats) {
+          if (stats.error) {
+            statsResult.innerHTML = '<div class="error">' + stats.error + '</div>';
+            return;
+          }
+          
+          let html = '<div class="stats-card">';
+          html += '<h4>📅 ' + month + ' 통계</h4>';
+          html += '<div class="stats-row"><span class="stats-label">총 영수증 수</span><span class="stats-value">' + stats.count + '건</span></div>';
+          html += '<div class="stats-row"><span class="stats-label">과세물품 합계</span><span class="stats-value">' + stats.taxableAmount.toLocaleString() + '원</span></div>';
+          html += '<div class="stats-row"><span class="stats-label">부가세 합계</span><span class="stats-value">' + stats.taxAmount.toLocaleString() + '원</span></div>';
+          html += '<div class="stats-row"><span class="stats-label">면세물품 합계</span><span class="stats-value">' + stats.taxFreeAmount.toLocaleString() + '원</span></div>';
+          html += '<div class="stats-total">총 지출: ' + stats.totalAmount.toLocaleString() + '원</div>';
+          html += '</div>';
+          
+          // 카테고리별 통계
+          if (stats.categories && stats.categories.length > 0) {
+            html += '<div class="stats-card">';
+            html += '<h4>🏷️ 카테고리별 통계</h4>';
+            stats.categories.forEach(cat => {
+              const percentage = ((cat.amount / stats.totalAmount) * 100).toFixed(1);
+              html += '<div class="stats-row">';
+              html += '<span class="stats-label">' + cat.icon + ' ' + cat.name + '</span>';
+              html += '<span class="stats-value">' + cat.amount.toLocaleString() + '원 (' + percentage + '%)</span>';
+              html += '</div>';
+            });
+            html += '</div>';
+          }
+          
+          // 결제수단별 통계
+          if (stats.payments && stats.payments.length > 0) {
+            html += '<div class="stats-card">';
+            html += '<h4>💳 결제수단별 통계</h4>';
+            stats.payments.forEach(pay => {
+              const percentage = ((pay.amount / stats.totalAmount) * 100).toFixed(1);
+              html += '<div class="stats-row">';
+              html += '<span class="stats-label">' + pay.name + '</span>';
+              html += '<span class="stats-value">' + pay.amount.toLocaleString() + '원 (' + percentage + '%)</span>';
+              html += '</div>';
+            });
+            html += '</div>';
+          }
+          
+          // 상호별 통계
+          if (stats.stores && stats.stores.length > 0) {
+            html += '<div class="stats-card">';
+            html += '<h4>🏪 상호별 통계 (상위 10개)</h4>';
+            stats.stores.forEach(store => {
+              html += '<div class="stats-row">';
+              html += '<span class="stats-label">' + store.name + '</span>';
+              html += '<span class="stats-value">' + store.amount.toLocaleString() + '원 (' + store.count + '건)</span>';
+              html += '</div>';
+            });
+            html += '</div>';
+          }
+          
+          statsResult.innerHTML = html;
+        })
+        .withFailureHandler(function(error) {
+          statsResult.innerHTML = '<div class="error">❌통계 조회 실패: ' + error + '</div>';
+        })
+        .getMonthlyStats(month);
+    }
+  </script>
+</body>
+</html>
