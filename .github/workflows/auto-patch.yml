@@ -5,6 +5,8 @@ on:
     paths:
       - "schema/**"
       - "schema_diff/**"
+      
+workflow_dispatch:
 
 jobs:
   patch:
