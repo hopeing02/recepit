@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from schema_diff import load_schema_diff
-from builders.fragment_prompt_builder import build_code_gs_prompt
+from fragment_prompt_builder import build_code_gs_prompt
 from claude_client import call_claude
 from diff_generator import generate_diff
 
