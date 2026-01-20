@@ -21,7 +21,7 @@
         ],
         "condition": "payment.method == 'CARD'",
         "default": "기타",
-        "description": "카드사"
+        "description": "카드사테스트"
       }
     }
   },
