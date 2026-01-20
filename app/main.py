@@ -1,8 +1,8 @@
 from fastapi import FastAPI
-from fastapi.schema_loader import load_schema_diff
-from fastapi.fragment_prompt_builder import build_code_gs_prompt
-from fastapi.claude_client import call_claude
-from fastapi.diff_generator import generate_diff
+from app.schema_loader import load_schema_diff
+from app.fragment_prompt_builder import build_code_gs_prompt
+from app.claude_client import call_claude
+from app.diff_generator import generate_diff
 
 app = FastAPI()
 
