@@ -26,9 +26,6 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
 
-      - name: Generate fragments
-        run: python -m app.main
-
       - name: Generate GAS patch
         run: python ci_run.py
 
