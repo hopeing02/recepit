@@ -11,10 +11,14 @@ def call_claude(prompt: str) -> str:
         "model": "claude-sonnet-4-5-20250929",
         "max_tokens": 1024,
         "messages": [
-            {"role": "user", "content": prompt}
+            {
+                "role": "user", 
+                 "content": [
+                     {"type": "text", "text": prompt}
+                ]
+            }
         ]
     }
-
     headers = {
         "x-api-key": api_key,
         "anthropic-version": "2023-06-01",
