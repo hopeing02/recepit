@@ -29,6 +29,9 @@ jobs:
       - name: Generate fragments
         run: python -m app.main
 
+      - name: Generate GAS patch
+        run: python ci_run.py
+
       - name: Show diff
         run: git diff
 
@@ -36,6 +39,6 @@ jobs:
         run: |
           git config user.name "auto-bot"
           git config user.email "bot@github.com"
-          git add Code.gs Index.html
-          git commit -m "auto: schema-driven patch" || echo "No changes"
+          git add Code.gs
+          git commit -m "auto: update Code.gs from schema diff" || echo "No changes"
           git push
