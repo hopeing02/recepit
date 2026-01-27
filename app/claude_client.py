@@ -1,21 +1,35 @@
-import os, requests
+# app/claude_client.py
+import os
+import requests
 
-CLAUDE_API_KEY = os.getenv("CLAUDE_API_KEY")
+API_URL = " https://api.anthropic.com/v1/messages"
 
 def call_claude(prompt: str) -> str:
+    api_key = os.environ["CLAUDE_API_KEY"]
+
+    payload = {
+        "model": "claude-3-5-sonnet-20241022",
+        "max_tokens": 1024,
+        "messages": [
+            {"role": "user", "content": prompt}
+        ]
+    }
+
+    headers = {
+        "x-api-key": api_key,
+        "anthropic-version": "2023-06-01",
+        "content-type": "application/json",
+    }
+
     res = requests.post(
-        "https://api.anthropic.com/v1/messages",
-        headers={
-            "x-api-key": CLAUDE_API_KEY,
-            "anthropic-version": "2023-06-01",
-            "content-type": "application/json",
-        },
-        json={
-            "model": "claude-sonnet-4-5-20250929",
-            "max_tokens": 4096,
-            "messages": [{"role": "user", "content": prompt}],
-        },
+        API_URL,
+        headers=headers,
+        json=payload,
         timeout=60,
     )
+
     res.raise_for_status()
-    return res.json()["content"][0]["text"]
+
+    data = res.json()
+
+    return data["content"][0]["text"]
