@@ -21,7 +21,7 @@ def main():
     # Code.gs에 실제 반영
     with open("Code.gs", "w", encoding="utf-8") as f:
         f.write(patch)
-
+    print(patch)
     print("✅ Code.gs updated successfully")
 
     # ---- 최소 GAS 검증 (선택이지만 강력 추천) ----
