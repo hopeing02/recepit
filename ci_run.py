@@ -1,8 +1,8 @@
 # ci_run.py
-from app.main import generate_code_gs_patch
+from app.main import generate_patch
 
 def main():
-    patch = generate_code_gs_patch()
+    patch = generate_patch()
 
     if not patch.strip():
         raise RuntimeError("Patch is empty")
