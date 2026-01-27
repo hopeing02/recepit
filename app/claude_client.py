@@ -15,7 +15,6 @@ def call_claude(prompt: str) -> str:
             "max_tokens": 4096,
             "messages": [{"role": "user", "content": prompt}],
         },
-        thinking={"type": "enabled", "budget_tokens": 2000},
         timeout=60,
     )
     res.raise_for_status()
