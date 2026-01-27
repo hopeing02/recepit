@@ -1,5 +1,11 @@
-fastapi
-uvicorn
-python-dotenv
-anthropic
-requests
+# FastAPI (서버 안 띄워도 import용으로 필요)
+fastapi==0.128.0
+
+# Claude API
+anthropic==0.76.0
+
+# HTTP client (anthropic 내부 + 네 코드에서 사용)
+requests==2.32.3
+
+# 환경변수 로딩 (로컬/CI 공통)
+python-dotenv==1.2.1
