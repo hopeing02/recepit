@@ -15,7 +15,7 @@ def generate_fragment():
 
 @app.post("/generate/patch/code-gs")
 def generate_patch():
-    with open("../Code.gs", encoding="utf-8") as f:
+    with open("Code.gs", encoding="utf-8") as f:
         original = f.read()
 
     diff = load_schema_diff("../schema_diff/receipt_schema_diff.json")
