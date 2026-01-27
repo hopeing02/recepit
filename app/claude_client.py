@@ -8,7 +8,7 @@ def call_claude(prompt: str) -> str:
     api_key = os.environ["CLAUDE_API_KEY"]
 
     payload = {
-        "model": "claude-3-5-sonnet-20241022",
+        "model": "claude-sonnet-4-5-20250929",
         "max_tokens": 1024,
         "messages": [
             {"role": "user", "content": prompt}
