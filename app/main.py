@@ -8,7 +8,7 @@ app = FastAPI()
 
 @app.post("/claude/fragment/code-gs")
 def generate_fragment():
-    diff = load_schema_diff("../schema_diff/receipt_schema_diff.json")
+    diff = load_schema_diff("schema_diff/receipt_schema_diff.json")
     prompt = build_code_gs_prompt(diff)
     fragment = call_claude(prompt)
     return {"fragment": fragment}
@@ -18,7 +18,7 @@ def generate_patch():
     with open("Code.gs", encoding="utf-8") as f:
         original = f.read()
 
-    diff = load_schema_diff("../schema_diff/receipt_schema_diff.json")
+    diff = load_schema_diff("schema_diff/receipt_schema_diff.json")
     prompt = build_code_gs_prompt(diff)
     fragment = call_claude(prompt)
 
