@@ -1,0 +1,5 @@
+var CONFIG = {
+  CLAUDE_API_KEY: '',
+  CLAUDE_MODEL: 'claude-sonnet-4-5-20250929',
+  TIMEZONE: 'Asia/Seoul'
+};
