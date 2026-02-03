@@ -12,7 +12,7 @@ function saveToSpreadsheet(data) {
     sheet = ss.insertSheet('영수증내역');
     // 첫 행에 열 제목들을 추가합니다.
     sheet.appendRow(['날짜', '상호명', '사업자번호', '품명', '수량', '단가', '금액', '카드회사', '카드번호', '과세물품', '부가세', '면세물품', '총액', '등록일시']);
-    // 첫 행의 12개 열 범위를 선택합니다.
+    // 첫 행의 14개 열 범위를 선택합니다.
     var header = sheet.getRange(1, 1, 1, 14);
     // 헤더 배경색을 파란색으로 설정합니다.
     header.setBackground('#4285f4').setFontColor('#ffffff').setFontWeight('bold');
