@@ -15,6 +15,8 @@ function buildReceiptExtractionPrompt() {
   "items": [
     { "name": string, "quantity": number, "unitPrice": number, "amount": number }
   ],
+  "cardcompany": string,
+  "cardnumber": string,
   "taxableAmount": number,
   "taxAmount": number,
   "taxFreeAmount": number,
