@@ -11,9 +11,9 @@ function saveToSpreadsheet(data) {
     // 영수증내역이라는 이름의 새 시트를 만듭니다.
     sheet = ss.insertSheet('영수증내역');
     // 첫 행에 열 제목들을 추가합니다.
-    sheet.appendRow(['날짜', '상호명', '사업자번호', '품명', '수량', '단가', '금액', '과세물품', '부가세', '면세물품', '총액', '등록일시']);
+    sheet.appendRow(['날짜', '상호명', '사업자번호', '품명', '수량', '단가', '금액', '카드회사', '카드번호', '과세물품', '부가세', '면세물품', '총액', '등록일시']);
     // 첫 행의 12개 열 범위를 선택합니다.
-    var header = sheet.getRange(1, 1, 1, 12);
+    var header = sheet.getRange(1, 1, 1, 14);
     // 헤더 배경색을 파란색으로 설정합니다.
     header.setBackground('#4285f4').setFontColor('#ffffff').setFontWeight('bold');
     // 헤더 텍스트를 가운데 정렬합니다.
@@ -33,16 +33,20 @@ function saveToSpreadsheet(data) {
     sheet.setColumnWidth(6, 100);  // 단가
     // 금액 열의 너비를 100픽셀로 설정합니다.
     sheet.setColumnWidth(7, 100);  // 금액
+    // 카드회사 열의 너비를 100픽셀로 설정합니다.
+    sheet.setColumnWidth(8, 100);  // 카드회사
+    // 카드번호 열의 너비를 100픽셀로 설정합니다.
+    sheet.setColumnWidth(9, 100);  // 카드번호
     // 과세물품 열의 너비를 100픽셀로 설정합니다.
-    sheet.setColumnWidth(8, 100);  // 과세물품
+    sheet.setColumnWidth(10, 100);  // 과세물품
     // 부가세 열의 너비를 100픽셀로 설정합니다.
-    sheet.setColumnWidth(9, 100);  // 부가세
+    sheet.setColumnWidth(11, 100);  // 부가세
     // 면세물품 열의 너비를 100픽셀로 설정합니다.
-    sheet.setColumnWidth(10, 100); // 면세물품
+    sheet.setColumnWidth(12, 100); // 면세물품
     // 총액 열의 너비를 100픽셀로 설정합니다.
-    sheet.setColumnWidth(11, 100); // 총액
+    sheet.setColumnWidth(13, 100); // 총액
     // 등록일시 열의 너비를 150픽셀로 설정합니다.
-    sheet.setColumnWidth(12, 150); // 등록일시
+    sheet.setColumnWidth(14, 150); // 등록일시
   }
   
   // 현재 시간을 한국 시간대 기준으로 포맷팅합니다.
